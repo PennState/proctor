@@ -2,4 +2,4 @@ module github.com/PennState/test-control
 
 go 1.12
 
-replace github.com/PennState/test-control => .
+require github.com/stretchr/testify v1.3.0
