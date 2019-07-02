@@ -5,7 +5,14 @@ are run in each stage of a build pipeline.  The conventions and flags
 used to control test execution are based on published best practices
 as well as the conventions adopted by Google.
 
-## The test pyramid
+## Background
+
+This section describes the resources that were used to determine what
+testing best practices should be included in the library.  Each
+section provides a brief synopsis as well as one or more references
+to the source materials.
+
+### The test pyramid
 
 Martin Fowler has described the "Test Pyramid"<sup>1</sup> in a post
 on his blog as a way of categorizing tests.  The idea of a test pyramid
@@ -24,21 +31,107 @@ expensive.
 These articles rework the classic test pyramid  used in many waterfall
 projects which contains, from earliest in the project to latest, unit
 tests, integration tests, system tests and acceptance tests.  In an
-agile world, thinking about when in a CI/CD pipeline these tests should
-be run makes more sense.
+agile world, thinking about when a CI/CD pipeline would run these tests
+makes more sense.
 
-## Google testing practices
+### Google testing practices
 
-A blog post titled "Test Sizes"<sup>1</sup> on the Google Testing Blog
-provides a useful way of grouping tests together based on size.
+A blog post titled "Test Sizes"<sup>3</sup> on the Google Testing Blog
+provides a useful way of grouping tests together based on size.  Each
+of these "sizes" additionally specifies what system and external
+resources are allowed.
 
-In Daniel Danilatos "GWT Testing Best Practices"<sup>2</sup> talk at
+In Daniel Danilatos "GWT Testing Best Practices"<sup>4</sup> talk at
 Google IO 201070-20-10, he casually mentions that test writers at Google
 categorize their tests as ``small``, ``medium`` and ``large`` and that,
 in general, the ratio of these tests should be 70%, 20% and 10% respect-
-ively.  He further states, that<sup>2</sup>
+ively.  He further states, that ``small`` tests should be very fast
+and have no external dependencies
 
-References
+### Test flags
+
+The ``go test`` command includes a feature that allows test flags to
+be passed into tests.  This feature and it's usefulness are described
+in Mitchell Hashimoto's "Advanced Testing with GO" presentation<sup>5</sup>.
+
+### Black-box testing
+
+### Design for testing
+
+## Rationale
+
+Putting these ideas together, we should be able to characterize each
+of our tests and apply one or more CLI ``flags`` to control when
+they are run.  Allowing individual tests to be flagged in multiple
+ways provides a fine-grained means of selecting tests (e.g. Not all
+large tests are UI tests.)
+
+This library provides a very small amount of code that conditionally
+skips tests based on these flags
+
+## Implementation
+
+In addition to the Go test command's built-in ``-short`` flag, this
+library provides the following additional test control flags:
+
+| Flags       |
+| :---------- |
+| Small       |
+| Medium      |
+| Large       |
+|             |
+| Unit        |
+| Integration |
+| System      |
+| Acceptance  |
+|             |
+| Service     |
+| UI          |
+|             |
+| Short       |
+| Long        |
+
+Note that ``Short`` and ``Long`` are aliases for ``testing.Short()``
+and ``!testing.Short()`` respectively.
+
+## Use
+
+## Custom flags
+
+Additionally, custom flags can be added to a project as needed -
+include the following code in the global scope of any of the project's
+test files as follows:
+
+```Go
+var (
+    MyFlag = Flag(flag.Bool("myflag", false, "Run my tests"))
+)
+
+func TestMySomething(t *testing.T) {
+    flagged.With(t, MyFlag)
+    ...
+}
+```
+
+The preceding code would execute if ``-myflag`` as passed as a CLI
+flag to the ``go test`` command.
+
+## Coverage
+
+While blackbox testing is recommended as a means to verify that the
+exported portions of the code is consistent with its intended use,
+the Go coverage tool and Go test command don't make it clear how
+the coverage provided by a black-box test can be included in the
+code's overall coverage report.  The simplest way to ensure your
+coverage report is accurate is to make your Go code a module and
+to execute the following Go test command at the top of your module's
+directory hierarchy:
+
+```shell
+go test -coverprofile coverage.out -coverpkg ./... ./...
+```
+
+## References
 
 1. [Test Pyramid](https://martinfowler.com/bliki/TestPyramid.html)
 2. [The Practical Test Pyramid](https://martinfowler.com/articles/practical-test-pyramid.html)
