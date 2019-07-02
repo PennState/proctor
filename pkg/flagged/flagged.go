@@ -21,6 +21,18 @@ var (
 	UI      = Flag(flag.Bool("ui", false, "Run UI tests"))
 )
 
+func With(t *testing.T, flag Flag) {
+	if !*flag {
+		t.SkipNow()
+	}
+}
+
+func Without(t *testing.T, flag Flag) {
+	if *flag {
+		t.SkipNow()
+	}
+}
+
 func WithAll(t *testing.T, flags ...Flag) {
 	for _, flag := range flags {
 		if !*flag {
