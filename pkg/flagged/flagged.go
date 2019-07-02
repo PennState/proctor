@@ -19,6 +19,10 @@ var (
 
 	Service = Flag(flag.Bool("service", false, "Run service tests"))
 	UI      = Flag(flag.Bool("ui", false, "Run UI tests"))
+
+	Short = Flag(flag.Bool("short", false, "Run short tests"))
+	long  = !(bool(*Short))
+	Long  = Flag(&long)
 )
 
 func With(t *testing.T, flag Flag) {
