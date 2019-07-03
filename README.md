@@ -52,11 +52,19 @@ and have no external dependencies
 
 The ``go test`` command includes a feature that allows test flags to
 be passed into tests.  This feature and it's usefulness are described
-in Mitchell Hashimoto's "Advanced Testing with GO" presentation<sup>5</sup>.
+in Mitchell Hashimoto's "Advanced Testing with Go" presentation<sup>5</sup>.
 
 ### Black-box testing
 
-### Design for testing
+### Design for testability
+
+To a large degree, the fraction of your code that can be tested by
+small/unit/short tests is determined by the design of that code.  It's
+often possible to dramatically increase the amount of code tested
+during this phase simply by changing the design of the software-under-
+test and/or the test code.  Most of the "Advanced Testing with Go"
+<sup>5</sup> presentation mentioned above is techniques that make your
+software more testable.
 
 ## Rationale
 
@@ -130,6 +138,9 @@ directory hierarchy:
 ```shell
 go test -coverprofile coverage.out -coverpkg ./... ./...
 ```
+
+Remember to pass along the flags that are appropriate for the
+current step in your CI/CD pipeline.
 
 ## References
 
