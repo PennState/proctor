@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/PennState/test-control/pkg/flagged"
+	"github.com/PennState/proctor/pkg/flagged"
 	"github.com/stretchr/testify/assert"
 )
 
