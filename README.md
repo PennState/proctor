@@ -1,4 +1,4 @@
-# test-control
+# proctor
 
 This project provides functions that allow the control of which tests
 are run in each stage of a build pipeline.  The conventions and flags

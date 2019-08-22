@@ -1,4 +1,4 @@
-module github.com/PennState/test-control
+module github.com/PennState/proctor
 
 go 1.12
 
