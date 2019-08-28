@@ -1,4 +1,4 @@
-package flagged_test
+package blackboxflagged
 
 import (
 	"flag"
