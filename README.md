@@ -136,7 +136,7 @@ to execute the following Go test command at the top of your module's
 directory hierarchy:
 
 ```shell
-go test -coverprofile coverage.out -coverpkg ./... ./...
+go test -coverprofile coverage.out -coverpkg ./pkg/... ./...
 ```
 
 Remember to pass along the flags that are appropriate for the
