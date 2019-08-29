@@ -2,7 +2,6 @@ package flagged
 
 import (
 	"flag"
-	"testing"
 )
 
 type Flag *bool
@@ -25,36 +24,44 @@ var (
 	Long  = Flag(&long)
 )
 
-func With(t *testing.T, flag Flag) {
-	if !*flag {
-		t.SkipNow()
-	}
-}
-
-func Without(t *testing.T, flag Flag) {
-	if *flag {
-		t.SkipNow()
-	}
-}
-
-func WithAll(t *testing.T, flags ...Flag) {
-	for _, flag := range flags {
-		if !*flag {
-			t.SkipNow()
-		}
-	}
-}
-
-func WithAny(t *testing.T, flags ...Flag) {
-	skip := true
+func hasAny(t TestingT, flags ...Flag) bool {
 	for _, flag := range flags {
 		if *flag {
-			skip = false
-			break
+			return true
 		}
 	}
+	return false
+}
 
-	if skip {
+func hasAll(t TestingT, flags ...Flag) bool {
+	for _, flag := range flags {
+		if !*flag {
+			return false
+		}
+	}
+	return true
+}
+
+// Runs the test only if one of the provided flags is present.
+func With(t TestingT, flags ...Flag) {
+	if !hasAny(t, flags...) {
+		// TODO: figure out how to generate a flag list
 		t.Skip("None of the following flags were present: ")
+	}
+}
+
+// Runs the test only if all the provided flags are present.
+func WithAll(t TestingT, flags ...Flag) {
+	if !hasAll(t, flags...) {
+		// TODO: figure out how to generate a flag list
+		t.Skip("One (or more) of the following flags was missing: ")
+	}
+}
+
+// Runs the test only if none of the provided flags are present.
+func Without(t TestingT, flags ...Flag) {
+	if hasAny(t, flags...) {
+		// TODO: figure out how to generate a flag list
+		t.Skip("One (or more) of the following flags were present: ")
 	}
 }

@@ -1,53 +1,37 @@
 package blackboxflagged
 
 import (
-	"flag"
-	"os"
 	"testing"
 
 	"github.com/PennState/proctor/pkg/flagged"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMain(m *testing.M) {
-	flag.Set("medium", "true")
-	flag.Set("integration", "true")
-	flag.Parse()
-	os.Exit(m.Run())
-}
+type skipper func(flagged.TestingT, ...flagged.Flag)
 
-func TestFlaggedWithAllRuns(t *testing.T) {
-	ran := false
-	t.Run("", func(t *testing.T) {
-		flagged.WithAll(t, flagged.Medium, flagged.Integration)
-		ran = true
-	})
-	assert.True(t, ran)
-}
-
-func TestFlaggedWithAllSkips(t *testing.T) {
-	skipped := true
-	t.Run("", func(t *testing.T) {
-		flagged.WithAll(t, flagged.Medium, flagged.System)
-		skipped = false
-	})
-	assert.True(t, skipped)
-}
-
-func TestFlaggedWithAnyRuns(t *testing.T) {
-	ran := false
-	t.Run("", func(t *testing.T) {
-		flagged.WithAny(t, flagged.Medium, flagged.System)
-		ran = true
-	})
-	assert.True(t, ran)
-}
-
-func TestFlaggedWithAnySkips(t *testing.T) {
-	skipped := true
-	t.Run("", func(t *testing.T) {
-		flagged.WithAny(t, flagged.Large, flagged.System)
-		skipped = false
-	})
-	assert.True(t, skipped)
+func Test(t *testing.T) {
+	set := true
+	flagged.Medium = flagged.Flag(&set)
+	flagged.Integration = flagged.Flag(&set)
+	tests := []struct {
+		Name    string
+		Flags   []flagged.Flag
+		Skip    bool
+		Skipper skipper
+	}{
+		{Name: "FlaggedWithRuns", Flags: []flagged.Flag{flagged.Medium, flagged.System}, Skip: false, Skipper: flagged.With},
+		{Name: "FlaggedWithSkips", Flags: []flagged.Flag{flagged.Large, flagged.System}, Skip: true, Skipper: flagged.With},
+		{Name: "FlaggedWithAllRuns", Flags: []flagged.Flag{flagged.Medium, flagged.Integration}, Skip: false, Skipper: flagged.WithAll},
+		{Name: "FlaggedWithAllSkips", Flags: []flagged.Flag{flagged.Medium, flagged.System}, Skip: true, Skipper: flagged.WithAll},
+		{Name: "FlaggedWithOutRuns", Flags: []flagged.Flag{flagged.Large, flagged.System}, Skip: false, Skipper: flagged.Without},
+		{Name: "FlaggedWithOutSkips", Flags: []flagged.Flag{flagged.Medium, flagged.System}, Skip: true, Skipper: flagged.Without},
+	}
+	for _, test := range tests {
+		skipped := true
+		t.Run(test.Name, func(t *testing.T) {
+			test.Skipper(t, test.Flags...)
+			skipped = false
+		})
+		assert.Equal(t, test.Skip, skipped)
+	}
 }
