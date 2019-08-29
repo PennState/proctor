@@ -79,7 +79,7 @@ func adaptFakeReturnAndStringToBytes(t *testing.T, f func(goldenfile.TestingT, s
 	}
 }
 
-func TestIt(t *testing.T) {
+func TestGoldenFiles(t *testing.T) {
 	tests := []struct {
 		Name      string
 		Type      string
