@@ -1,0 +1,13 @@
+
+{
+	"fieldA": "Field A",
+	"fieldB": 1234,
+	"fieldC": [
+		2345,
+		3457
+	],
+	"fieldD": {
+		"fieldE": "Field E",
+		"fieldF": 4567
+	}
+}
