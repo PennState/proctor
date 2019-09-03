@@ -10,8 +10,12 @@ const (
 	DefaultGoldenFileSuffix = ".golden"
 )
 
-func MakeDefaultName(name string) string {
+func GetDefaultFilePath(name string) string {
 	return filepath.Join(DefaultTestDirectory, name+DefaultGoldenFileSuffix)
+}
+
+func PrependDefaultDirectoryPath(name string) string {
+	return filepath.Join(DefaultTestDirectory, name)
 }
 
 //

@@ -101,7 +101,7 @@ func TestGoldenFiles(t *testing.T) {
 			testName := fmt.Sprintf("%s-%s-%t", test.Name, test.Type, update)
 			t.Run(testName, func(t *testing.T) {
 				goldenfile.Update = &update
-				fp := goldenfile.MakeDefaultName(test.Name)
+				fp := goldenfile.GetDefaultFilePath(test.Name)
 				now := time.Now().Truncate(0)
 				actual := test.Assertion(t, fp, test.Data)
 				assert.True(t, actual)
