@@ -11,7 +11,7 @@ func requireEqual(t TestingT, eq GoldenFileComparisonAssertionFunc, filepath str
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
 	}
-	t.FailNow()
+	t.Fatal(msgAndArgs)
 }
 
 func RequireBytesEq(t TestingT, filepath string, actual []byte, msgAndArgs ...interface{}) {
