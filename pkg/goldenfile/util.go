@@ -10,11 +10,8 @@ var Update = flag.Bool("update", false, "Update golden files")
 //
 
 type TestingT interface {
-	Errorf(format string, args ...interface{})
-	FailNow()
 	Fatal(msgAndArgs ...interface{})
 	Log(args ...interface{})
-	Skip(msgAndArgs ...interface{})
 }
 
 type tHelper interface {
