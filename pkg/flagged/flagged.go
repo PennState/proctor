@@ -2,31 +2,47 @@ package flagged
 
 import (
 	"flag"
+	"strings"
 )
 
-type Flag *bool
+type Flag struct {
+	Name    string
+	Default bool
+	Help    string
+	Flag    *bool
+}
+
+// NewFlag creates a new test flag which wraps flag.Bool in order to
+// report why a test was skipped.
+func NewFlag(name string, def bool, help string) Flag {
+	return Flag{
+		Name:    name,
+		Default: def,
+		Help:    help,
+		Flag:    flag.Bool(name, def, help),
+	}
+}
 
 var (
-	Small  = Flag(flag.Bool("small", true, "Run small tests"))
-	Medium = Flag(flag.Bool("medium", false, "Run medium tests"))
-	Large  = Flag(flag.Bool("large", false, "Run large tests"))
+	Small  = NewFlag("small", true, "Run small tests")
+	Medium = NewFlag("medium", false, "Run medium tests")
+	Large  = NewFlag("large", false, "Run large tests")
 
-	Unit        = Flag(flag.Bool("unit", true, "Run unit tests"))
-	Integration = Flag(flag.Bool("integration", false, "Run integration tests"))
-	System      = Flag(flag.Bool("system", false, "Run system tests"))
-	Acceptance  = Flag(flag.Bool("acceptance", false, "Run acceptance tests"))
+	Unit        = NewFlag("unit", true, "Run unit tests")
+	Integration = NewFlag("integration", false, "Run integration tests")
+	System      = NewFlag("system", false, "Run system tests")
+	Acceptance  = NewFlag("acceptance", false, "Run acceptance tests")
 
-	Service = Flag(flag.Bool("service", false, "Run service tests"))
-	UI      = Flag(flag.Bool("ui", false, "Run UI tests"))
+	Service = NewFlag("service", false, "Run service tests")
+	UI      = NewFlag("ui", false, "Run UI tests")
 
-	Short = Flag(flag.Bool("short", false, "Run short tests"))
-	long  = !(bool(*Short))
-	Long  = Flag(&long)
+	Short = NewFlag("short", false, "Run short tests")
+	Long  = NewFlag("long", false, "Run long tests")
 )
 
 func hasAny(t TestingT, flags ...Flag) bool {
 	for _, flag := range flags {
-		if *flag {
+		if *flag.Flag {
 			return true
 		}
 	}
@@ -35,33 +51,38 @@ func hasAny(t TestingT, flags ...Flag) bool {
 
 func hasAll(t TestingT, flags ...Flag) bool {
 	for _, flag := range flags {
-		if !*flag {
+		if !*flag.Flag {
 			return false
 		}
 	}
 	return true
 }
 
+func flagString(flags ...Flag) string {
+	flagNames := []string{}
+	for _, flag := range flags {
+		flagNames = append(flagNames, flag.Name)
+	}
+	return strings.Join(flagNames, ", ")
+}
+
 // Runs the test only if one of the provided flags is present.
 func With(t TestingT, flags ...Flag) {
 	if !hasAny(t, flags...) {
-		// TODO: figure out how to generate a flag list
-		t.Skip("None of the following flags were present: ")
+		t.Skip("None of the following flags were present:", flagString(flags...))
 	}
 }
 
 // Runs the test only if all the provided flags are present.
 func WithAll(t TestingT, flags ...Flag) {
 	if !hasAll(t, flags...) {
-		// TODO: figure out how to generate a flag list
-		t.Skip("One (or more) of the following flags was missing: ")
+		t.Skip("One (or more) of the following flags was missing:", flagString(flags...))
 	}
 }
 
 // Runs the test only if none of the provided flags are present.
 func Without(t TestingT, flags ...Flag) {
 	if hasAny(t, flags...) {
-		// TODO: figure out how to generate a flag list
-		t.Skip("One (or more) of the following flags were present: ")
+		t.Skip("One (or more) of the following flags were present:", flagString(flags...))
 	}
 }

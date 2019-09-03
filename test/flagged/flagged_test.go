@@ -11,8 +11,8 @@ type skipper func(flagged.TestingT, ...flagged.Flag)
 
 func Test(t *testing.T) {
 	set := true
-	flagged.Medium = flagged.Flag(&set)
-	flagged.Integration = flagged.Flag(&set)
+	flagged.Medium.Flag = &set
+	flagged.Integration.Flag = &set
 	tests := []struct {
 		Name    string
 		Flags   []flagged.Flag
