@@ -41,6 +41,9 @@ var (
 )
 
 func hasAny(t TestingT, flags ...Flag) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
 	for _, flag := range flags {
 		if *flag.Flag {
 			return true
@@ -50,6 +53,9 @@ func hasAny(t TestingT, flags ...Flag) bool {
 }
 
 func hasAll(t TestingT, flags ...Flag) bool {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
 	for _, flag := range flags {
 		if !*flag.Flag {
 			return false
@@ -58,7 +64,10 @@ func hasAll(t TestingT, flags ...Flag) bool {
 	return true
 }
 
-func flagString(flags ...Flag) string {
+func flagString(t TestingT, flags ...Flag) string {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
 	flagNames := []string{}
 	for _, flag := range flags {
 		flagNames = append(flagNames, flag.Name)
@@ -68,21 +77,30 @@ func flagString(flags ...Flag) string {
 
 // Runs the test only if one of the provided flags is present.
 func With(t TestingT, flags ...Flag) {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
 	if !hasAny(t, flags...) {
-		t.Skip("None of the following flags were present:", flagString(flags...))
+		t.Skip("None of the following flags were present:", flagString(t, flags...))
 	}
 }
 
 // Runs the test only if all the provided flags are present.
 func WithAll(t TestingT, flags ...Flag) {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
 	if !hasAll(t, flags...) {
-		t.Skip("One (or more) of the following flags was missing:", flagString(flags...))
+		t.Skip("One (or more) of the following flags was missing:", flagString(t, flags...))
 	}
 }
 
 // Runs the test only if none of the provided flags are present.
 func Without(t TestingT, flags ...Flag) {
+	if h, ok := t.(tHelper); ok {
+		h.Helper()
+	}
 	if hasAny(t, flags...) {
-		t.Skip("One (or more) of the following flags were present:", flagString(flags...))
+		t.Skip("One (or more) of the following flags were present:", flagString(t, flags...))
 	}
 }
