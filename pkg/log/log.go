@@ -6,7 +6,7 @@ import (
 
 // Logger returns a new logrus Logger that outputs its data to the
 // testing package's Log() method.
-func Logger(t TestingT) *logrus.Logger {
+func New(t TestingT) *logrus.Logger {
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
 	}
