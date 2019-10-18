@@ -45,6 +45,8 @@ func New(t TestingT) *Logger {
 	return Wrap(t, logger)
 }
 
+// Wrap encapsulates an existing logrus.Logger inside methods that
+// are known to be test helpers
 func Wrap(t TestingT, logger *logrus.Logger) *Logger {
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
