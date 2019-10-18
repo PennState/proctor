@@ -1,6 +1,6 @@
 /*
 Package log wraps the testing package's T.Log(args ...interface{}) method
-with the logrus logger ("github.com/sirupsen/logrus").  Since this package
+with a logrus logger ("github.com/sirupsen/logrus").  Since this package
 merely provides a logrus Logger, all logging levels and their associated
 methods can be used (see the full logrus documentation at
 https://github.com/sirupsen/logrus).  Calling the setOutput()or setLevel()
