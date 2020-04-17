@@ -10,10 +10,21 @@ const (
 	DefaultGoldenFileSuffix = ".golden"
 )
 
+/*
+GetDefaultFilePath creates a file path from a file name by prepending
+the default test directory name and appending the default golden file
+suffix.  If the passed name is "foo.json", the resulting file path
+will be "./testdata/foo.json.goldenfile".
+*/
 func GetDefaultFilePath(name string) string {
 	return filepath.Join(DefaultTestDirectory, name+DefaultGoldenFileSuffix)
 }
 
+/*
+PrependDefaultDirectoryPath creates a file path from a file name by
+prepending the default test directory name.  If the provided name is
+"foo.json", the resulting file path will be "./testdata/foo.json".
+*/
 func PrependDefaultDirectoryPath(name string) string {
 	return filepath.Join(DefaultTestDirectory, name)
 }
