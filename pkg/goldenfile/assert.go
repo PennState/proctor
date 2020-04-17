@@ -4,7 +4,7 @@ package goldenfile
 // Assertions and requirements (in the same fashion as Testify)
 //
 
-func assertEqual(t TestingT, eq GoldenFileComparisonAssertionFunc, filepath string, actual []byte, msgAndArgs ...interface{}) bool {
+func assertEqual(t TestingT, eq ByteArrayComparisonAssertionFunc, filepath string, actual []byte, msgAndArgs ...interface{}) bool {
 	if h, ok := t.(tHelper); ok {
 		h.Helper()
 	}
